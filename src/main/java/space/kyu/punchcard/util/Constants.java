@@ -18,12 +18,15 @@ public class Constants {
 	public static final String USER = "yukai";
 	public static final String PASSWORD = "yukai";
 	public static final String User_Agent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.87 Safari/537.36";
+	public static final String SCHEME = "http";
 	public static final String HOST = "192.168.101.25";
 	public static final String LOGIN_REFERER_PATH = "/System/System_login.asp?screen=4";
 	public static final String LOGIN_VERIFY_PATH = "/System/system_login_verify.asp";
 	public static final String VEARIFY_CODE_PATH = "/TimeCard/Kq_GetCode.asp";
 	public static final String VEARIFY_CODE_REFERER_PATH = "/TimeCard/TimeCard_Kq.asp";
-	public static final String SCHEME = "http";
+	public static final String PUCH_CARD_TIME_PATH = "/TimeCard/TimeCard_Kq.asp";
+	public static final String PUCH_CARD_PATH = "/TimeCard_ServerTime.asp";
+	public static final String PUCH_CARD_TIME_REFERER_PATH = "http://192.168.101.25/System/DetailFrame.asp?WorkFrame=%2FTimeCard%2FTimeCard%5FKq%2Easp&TitleName=%BF%BC%C7%DA%B9%DC%C0%ED%2D%3E%BF%BC%C7%DA%B5%C7%BC%C7";
 	public static int PIC_NO = 0;
 
 	public static int getPicNo() {
