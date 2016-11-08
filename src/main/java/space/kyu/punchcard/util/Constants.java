@@ -24,6 +24,11 @@ public class Constants {
 	public static final String VEARIFY_CODE_PATH = "/TimeCard/Kq_GetCode.asp";
 	public static final String VEARIFY_CODE_REFERER_PATH = "/TimeCard/TimeCard_Kq.asp";
 	public static final String SCHEME = "http";
+	public static int PIC_NO = 0;
+
+	public static int getPicNo() {
+		return ++PIC_NO;
+	}
 
 	public static String getCookie() {
 		if (COOKIE == null || "".equals(COOKIE)) {
