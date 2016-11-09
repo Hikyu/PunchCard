@@ -8,18 +8,18 @@ import java.io.FileOutputStream;
 
 import org.junit.Test;
 
+import space.kyu.punchcard.puchcard.CodeIdentity;
 import space.kyu.punchcard.puchcard.VerifyCode;
 
 public class VerifyCodeTest {
 	private static String testCode = ".\\resource\\test\\code.jpg";
 	private static String oriPath = ".\\resource\\verifycode\\origin";
-//	private static String testTrainPath = ".\\resource\\test\\train";
 	private static String trainPath = ".\\resource\\verifycode\\train";
 
 	@Test
 	public void testGetCode() {
 		try {
-			byte[] bs = new VerifyCode().getVerifyCode();
+			byte[] bs = VerifyCode.getVerifyCode();
 			File file = new File(testCode);
 			if (!(file.exists() && file.isFile())) {
 				file.createNewFile();
@@ -37,7 +37,7 @@ public class VerifyCodeTest {
 	@Test
 	public void testTrainCode() {
 		try {
-//			CodeIdentity.trainData(oriPath, trainPath);
+			CodeIdentity.trainData(oriPath, trainPath);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();
@@ -46,14 +46,14 @@ public class VerifyCodeTest {
 
 	@Test
 	public void testIdentityCode() {
-		// testGetCode();
+		testGetCode();
 		try {
 			// BufferedInputStream stream = new BufferedInputStream(new
 			// FileInputStream(file));
 			// byte[] bytes = new byte[(int) file.length()];
 			// stream.read(bytes);
-//			String result = CodeIdentity.getAllOcr(testCode, trainPath);
-//			System.out.println(result);
+			String result = CodeIdentity.getIdentityResult(testCode, trainPath);
+			System.out.println(result);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();

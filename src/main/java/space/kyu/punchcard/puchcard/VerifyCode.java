@@ -1,19 +1,14 @@
 package space.kyu.punchcard.puchcard;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -36,7 +31,7 @@ public class VerifyCode {
 
 	public static String getCodeIdentityRes() {
 		try {
-			storeVerifyCode(getVerifyCode());
+			storeCode(getVerifyCode(), verifyCodePath);
 			checkTrainFileExist();
 			return CodeIdentity.getIdentityResult(verifyCodePath, trainPath);
 		} catch (Exception e) {
@@ -54,8 +49,8 @@ public class VerifyCode {
 		}
 	}
 
-	private static void storeVerifyCode(byte[] bs) throws IOException {
-		File file = new File(verifyCodePath);
+	private static void storeCode(byte[] bs, String path) throws IOException {
+		File file = new File(path);
 		if (!(file.exists() && file.isFile())) {
 			file.createNewFile();
 		}
@@ -65,12 +60,32 @@ public class VerifyCode {
 		outputStream.close();
 	}
 
+	/**
+	 * 将当前的验证码图片存入源验证码库
+	 * 并重新生成训练库
+	 * @param codeName
+	 *            验证码名称
+	 */
+	public static void storeCode2TrainDir(String codeName) {
+		try {
+			File file = new File(verifyCodePath);
+			BufferedInputStream iStream = new BufferedInputStream(new FileInputStream(file));
+			byte[] bs = new byte[(int) file.length()];
+			iStream.read(bs);
+			String path = oriPath + File.separator + codeName + ".jpg";
+			storeCode(bs, path);
+			CodeIdentity.trainData(oriPath, trainPath);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static byte[] getVerifyCode() throws Exception {
 		URI uri = new URIBuilder().setScheme(Constants.SCHEME).setHost(Constants.HOST)
 				.setPath(Constants.VEARIFY_CODE_PATH).build();
 
 		HttpGet httpGet = new HttpGet(uri);
-		httpGet.setHeader("User-Agent", Constants.User_Agent);
+		httpGet.setHeader("User-Agent", Constants.USER_AGENT);
 		httpGet.setHeader("Referer", Constants.VEARIFY_CODE_REFERER_PATH);
 		httpGet.setHeader("Cookie", Constants.getCookie());
 		return getCodeImg(HttpClientUtil.doGet(httpGet));

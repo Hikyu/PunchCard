@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,12 +13,18 @@ import javax.imageio.ImageIO;
 
 import space.kyu.punchcard.util.Constants;
 
+/**
+ * 验证码识别 reference: http://blog.csdn.net/problc/article/details/5800093
+ * 
+ * @author kyu
+ *
+ */
 public class CodeIdentity {
 	private static Map<BufferedImage, String> trainMap = null;
 
 	private static int isBlack(int colorInt) {
 		Color color = new Color(colorInt);
-		if (color.getRed() + color.getGreen() + color.getBlue() <= 100) {
+		if (color.getRed() + color.getGreen() + color.getBlue() <= 10) {
 			return 1;
 		}
 		return 0;
@@ -25,7 +32,7 @@ public class CodeIdentity {
 
 	private static int isWhite(int colorInt) {
 		Color color = new Color(colorInt);
-		if (color.getRed() + color.getGreen() + color.getBlue() > 600) {
+		if (color.getRed() + color.getGreen() + color.getBlue() > 500) {
 			return 1;
 		}
 		return 0;
@@ -111,7 +118,7 @@ public class CodeIdentity {
 		}
 		for (int i = 0; i < weightlist.size(); i++) {
 			int length = 0;
-			while (i < weightlist.size() && weightlist.get(i) > 0) {
+			while (i < weightlist.size() && weightlist.get(i) > 1) {
 				i++;
 				length++;
 			}
@@ -124,7 +131,7 @@ public class CodeIdentity {
 
 	private static Map<BufferedImage, String> loadTrainData(String trainPath) throws Exception {
 		if (trainMap == null) {
-			Map<BufferedImage, String> map = new HashMap<BufferedImage, String>();
+			Map<BufferedImage, String> map = new LinkedHashMap<BufferedImage, String>();
 			File dir = new File(trainPath);
 			File[] files = dir.listFiles();
 			for (File file : files) {
@@ -139,24 +146,24 @@ public class CodeIdentity {
 		String result = "#";
 		int width = img.getWidth();
 		int height = img.getHeight();
-		int min = width * height;
+		// 相同的像素点个数
+		int minIdentical = 0;
 		for (BufferedImage bi : map.keySet()) {
 			int count = 0;
-			if (Math.abs(bi.getWidth() - width) > 2)
+			if (Math.abs(bi.getWidth() - width) > 1)
 				continue;
-			int widthmin = width < bi.getWidth() ? width : bi.getWidth();
-			int heightmin = height < bi.getHeight() ? height : bi.getHeight();
-			Label1: for (int x = 0; x < widthmin; ++x) {
+			int widthmin = Math.min(width, bi.getWidth());
+			int heightmin = Math.min(height, bi.getHeight());
+			for (int x = 0; x < widthmin; ++x) {
 				for (int y = 0; y < heightmin; ++y) {
-					if (isBlack(img.getRGB(x, y)) != isBlack(bi.getRGB(x, y))) {
+					if (isBlack(img.getRGB(x, y)) == isBlack(bi.getRGB(x, y))) {
 						count++;
-						if (count >= min)
-							break Label1;
 					}
 				}
 			}
-			if (count < min) {
-				min = count;
+			if (count > minIdentical) {
+				// 选出相同色素个数最多的train image
+				minIdentical = count;
 				result = map.get(bi);
 			}
 		}
@@ -194,6 +201,7 @@ public class CodeIdentity {
 	 * @throws Exception
 	 */
 	public static void trainData(String oriPath, String trainPath) throws Exception {
+		clearTrainDir(trainPath);
 		File dir = new File(oriPath);
 		File[] files = dir.listFiles();
 		for (File file : files) {
@@ -208,6 +216,20 @@ public class CodeIdentity {
 				}
 			}
 		}
+	}
+
+	private static boolean clearTrainDir(String trainPath) {
+		File trainDir = new File(trainPath);
+		if (trainDir.isDirectory()) {
+			File[] file = trainDir.listFiles();
+			for (int i = 0; i < file.length; i++) {
+				boolean success = file[i].delete();
+				if (!success) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 }

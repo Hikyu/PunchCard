@@ -13,7 +13,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
-
+/**
+ * 网络请求工具类
+ * @author kyu
+ *
+ */
 public class HttpClientUtil {
 	private static HttpClient httpClient;
 	static {
@@ -83,6 +87,7 @@ public class HttpClientUtil {
 		String line = null;
 		while ((line = reader.readLine()) != null) {
 			sBuilder.append(line);
+//			System.out.println(line);
 		}
 		return sBuilder.toString();
 	}
