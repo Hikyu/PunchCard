@@ -1,90 +1,102 @@
 package space.kyu.punchcard.puchcard;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import space.kyu.punchcard.code.VerifyCode;
+import space.kyu.punchcard.net.ServerOperation;
 import space.kyu.punchcard.util.Constants;
-import space.kyu.punchcard.util.HttpClientUtil;
 
 /**
  * 执行打卡
  * 
- * @author kyu
- *
+ * @author kyu 2016-11-08
  */
 public class PunchCard {
 	private String verifyCode;
+	private String errorMsg;
+
+	public PunchCard() {
+		errorMsg = "";
+		verifyCode = "";
+	}
 
 	/**
 	 * 打上午上班卡
+	 * 
+	 * @return
 	 */
-	public void puchCardAMStart() {
+	public boolean puchCardAMStart() {
 		try {
 			getVerifyCode();
 			List<String> params = getPuchCardParams("上班登记");
 			List<NameValuePair> pairsList = getParamsPairAMStart(params);
 			sendPuchCardMsg(pairsList);
+			return true;
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
-			return;
+			errorMsg = e.getMessage();
+			return false;
 		}
 	}
-	
+
 	/**
 	 * 打上午下班卡
 	 */
-	public void puchCardAMEnd() {
+	public boolean puchCardAMEnd() {
 		try {
 			getVerifyCode();
 			List<String> params = getPuchCardParams("下班登记");
 			List<NameValuePair> pairsList = getParamsPairAMEnd(params);
 			sendPuchCardMsg(pairsList);
+			return true;
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
-			return;
+			errorMsg = e.getMessage();
+			return false;
 		}
 	}
 
 	/**
 	 * 打下午上班卡
+	 * 
+	 * @return
 	 */
-	public void puchCardPMStart() {
+	public boolean puchCardPMStart() {
 		try {
 			getVerifyCode();
 			List<String> params = getPuchCardParams("上班登记");
 			List<NameValuePair> pairsList = getParamsPairPMStart(params);
 			sendPuchCardMsg(pairsList);
+			return true;
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
-			return;
+			errorMsg = e.getMessage();
+			return false;
 		}
 	}
-	
+
 	/**
 	 * 打下午下班卡
+	 * 
+	 * @return
 	 */
-	public void puchCardPMEnd() {
+	public boolean puchCardPMEnd() {
 		try {
 			getVerifyCode();
 			List<String> params = getPuchCardParams("下班登记");
 			List<NameValuePair> pairsList = getParamsPairPMEnd(params);
 			sendPuchCardMsg(pairsList);
+			return true;
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
-			return;
+			errorMsg = e.getMessage();
+			return false;
 		}
 	}
 
@@ -99,6 +111,28 @@ public class PunchCard {
 		}
 		return verifyCode;
 
+	}
+
+	private void sendPuchCardMsg(List<NameValuePair> params) throws Exception {
+		String result = ServerOperation.sendPuchCardMsg(params);
+		if (result != null) {
+			if (result.contains("校验码不正确")) {
+				throw new Exception(">>>校验码不正确...");
+			} else {
+				// 打卡成功，将此次获得的验证码存入训练库，并命名为验证码内容
+				VerifyCode.storeCode2TrainDir(verifyCode);
+			}
+		}
+	}
+
+	private List<String> analyzePuchCardFunc(String puchCardFunc) {
+		int paramStart = puchCardFunc.indexOf("'");
+		int paramEnd = puchCardFunc.lastIndexOf("'") + 1;
+		String params = puchCardFunc.substring(paramStart, paramEnd).replace("'", "");
+		String[] arr = params.split(",");
+
+		List<String> paramList = Arrays.asList(arr);
+		return paramList;
 	}
 
 	/**
@@ -120,38 +154,39 @@ public class PunchCard {
 	private List<String> getPuchCardParams(String key) throws Exception {
 		String html;
 		try {
-			html = getTimeCard();
+			html = ServerOperation.getTimeCard();
+			Document doc = Jsoup.parse(html);
+			Elements amStart = doc.select("a:contains(" + key + ")");
+			Element element = amStart.get(0);
+			String puchCardFunc = element.attr("onclick");
+			List<String> params = analyzePuchCardFunc(puchCardFunc);
+			return params;
 		} catch (Exception e) {
 			throw new Exception(">>>获取打卡参数信息失败...");
 		}
-		Document doc = Jsoup.parse(html);
-		Elements amStart = doc.select("a:contains(" + key + ")");
-		Element element = amStart.get(0);
-		String puchCardFunc = element.attr("onclick");
-		List<String> params = analyzePuchCardFunc(puchCardFunc);
-		return params;
+
 	}
-	
+
 	private List<NameValuePair> getParamsPairAMStart(List<String> params) {
 		// kq4
-		// ="TimeCard_ServerTime.asp?NumTime=1&num1="+num1+"&num2="+num2+"&num3="+num3+"&num4="+num4+"&CodeStr20090608="+code;
+		// "TimeCard_ServerTime.asp?NumTime=1&num1="+num1+"&num2="+num2+"&num3="+num3+"&num4="+num4+"&CodeStr20090608="+code;
 		List<NameValuePair> pairsList = new ArrayList<NameValuePair>();
 		NameValuePair pair = null;
 		pair = new BasicNameValuePair("NumTime", "1");
 		pairsList.add(pair);
-		pair = new BasicNameValuePair("num1", params.get(3));
+		pair = new BasicNameValuePair("num1", params.get(0));
 		pairsList.add(pair);
-		pair = new BasicNameValuePair("num2", params.get(4));
+		pair = new BasicNameValuePair("num2", params.get(1));
 		pairsList.add(pair);
-		pair = new BasicNameValuePair("num3", params.get(5));
+		pair = new BasicNameValuePair("num3", params.get(2));
 		pairsList.add(pair);
-		pair = new BasicNameValuePair("num4", params.get(6));
+		pair = new BasicNameValuePair("num4", params.get(3));
 		pairsList.add(pair);
 		pair = new BasicNameValuePair("CodeStr20090608", verifyCode);
 		pairsList.add(pair);
 		return pairsList;
 	}
-	
+
 	private List<NameValuePair> getParamsPairPMEnd(List<String> params) {
 		// kq4
 		// "TimeCard_ServerTime.asp?NumTime=4&k4="+k4+"&SetTime1="+SetTime1+"&num1="+num1+"&num2="+num2+"&num3="+num3+"&num4="+num4+"&CodeStr20090608="+code;
@@ -163,13 +198,13 @@ public class PunchCard {
 		pairsList.add(pair);
 		pair = new BasicNameValuePair("settime1", params.get(1));
 		pairsList.add(pair);
-		pair = new BasicNameValuePair("num1", params.get(3));
+		pair = new BasicNameValuePair("num1", params.get(2));
 		pairsList.add(pair);
-		pair = new BasicNameValuePair("num2", params.get(4));
+		pair = new BasicNameValuePair("num2", params.get(3));
 		pairsList.add(pair);
-		pair = new BasicNameValuePair("num3", params.get(5));
+		pair = new BasicNameValuePair("num3", params.get(4));
 		pairsList.add(pair);
-		pair = new BasicNameValuePair("num4", params.get(6));
+		pair = new BasicNameValuePair("num4", params.get(5));
 		pairsList.add(pair);
 		pair = new BasicNameValuePair("CodeStr20090608", verifyCode);
 		pairsList.add(pair);
@@ -227,55 +262,11 @@ public class PunchCard {
 		return pairsList;
 	}
 
-	private void sendPuchCardMsg(List<NameValuePair> params) throws Exception {
-		try {
-			URI uri = new URIBuilder().setScheme(Constants.SCHEME).setHost(Constants.HOST)
-					.setPath(Constants.PUCH_CARD_PATH).setParameters(params).build();
-			HttpGet httpGet = new HttpGet(uri);
-			httpGet.setHeader("User-Agent", Constants.USER_AGENT);
-			httpGet.setHeader("Cookie", Constants.getCookie());
-			httpGet.setHeader("Referer", Constants.PUCH_CARD_REFERER_PATH);
-			HttpResponse resp = HttpClientUtil.doGet(httpGet);
-			String content = HttpClientUtil.printRespContent(resp);
-			
-			System.out.println(content);
-			//TODO 如打卡成功，将此次获得的验证码存入训练库，并命名为验证码内容
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new Exception(">>>发送打卡请求失败...");
-		}
+	public String getErrorMsg() {
+		return errorMsg;
 	}
 
-	private List<String> analyzePuchCardFunc(String puchCardFunc) {
-		int paramStart = puchCardFunc.indexOf("'");
-		int paramEnd = puchCardFunc.lastIndexOf("'") + 1;
-		String params = puchCardFunc.substring(paramStart, paramEnd).replace("'", "");
-		String[] arr = params.split(",");
-
-		List<String> paramList = Arrays.asList(arr);
-		return paramList;
-	}
-
-	private String getTimeCard() throws Exception {
-		String content = "";
-		try {
-			URI uri = new URIBuilder().setScheme(Constants.SCHEME).setHost(Constants.HOST)
-					.setPath(Constants.PUCH_CARD_TIME_PATH).build();
-			HttpGet httpGet = new HttpGet(uri);
-			httpGet.setHeader("User-Agent", Constants.USER_AGENT);
-			httpGet.setHeader("Referer", Constants.PUCH_CARD_TIME_REFERER_PATH);
-			httpGet.setHeader("Cookie", Constants.getCookie());
-			HttpResponse response = HttpClientUtil.doGet(httpGet);
-			content = HttpClientUtil.printRespContent(response);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-		return content;
-	}
-
-	public static void main(String[] args) {
-		new PunchCard().puchCardPMStart();
-	}
+	// public static void main(String[] args) {
+	// new PunchCard().puchCardPMEnd();
+	// }
 }

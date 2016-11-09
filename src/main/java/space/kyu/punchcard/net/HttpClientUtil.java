@@ -1,4 +1,4 @@
-package space.kyu.punchcard.util;
+package space.kyu.punchcard.net;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -16,7 +16,7 @@ import org.apache.http.impl.client.HttpClients;
 /**
  * 网络请求工具类
  * @author kyu
- *
+ * 2016-11-08
  */
 public class HttpClientUtil {
 	private static HttpClient httpClient;
@@ -81,14 +81,21 @@ public class HttpClientUtil {
 	}
 
 	public static String printRespContent(HttpResponse response) throws Exception {
-		InputStream content = getStreamFomeResp(response);
-		BufferedReader reader = new BufferedReader(new InputStreamReader(content, "GBK"));
 		StringBuilder sBuilder = new StringBuilder();
-		String line = null;
-		while ((line = reader.readLine()) != null) {
-			sBuilder.append(line);
-//			System.out.println(line);
+		BufferedReader reader = null;
+		try {
+			InputStream content = getStreamFomeResp(response);
+			reader = new BufferedReader(new InputStreamReader(content, "GBK"));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sBuilder.append(line);
+			}
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
 		}
+		
 		return sBuilder.toString();
 	}
 

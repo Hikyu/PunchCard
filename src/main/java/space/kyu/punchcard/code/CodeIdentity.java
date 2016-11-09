@@ -1,4 +1,4 @@
-package space.kyu.punchcard.puchcard;
+package space.kyu.punchcard.code;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -14,13 +14,15 @@ import javax.imageio.ImageIO;
 import space.kyu.punchcard.util.Constants;
 
 /**
- * 验证码识别 reference: http://blog.csdn.net/problc/article/details/5800093
+ * 验证码识别 
+ * reference: http://blog.csdn.net/problc/article/details/5800093
  * 
  * @author kyu
- *
+ * 2016-11-07
  */
 public class CodeIdentity {
 	private static Map<BufferedImage, String> trainMap = null;
+	public static int PIC_NO = 0;
 
 	private static int isBlack(int colorInt) {
 		Color color = new Color(colorInt);
@@ -211,7 +213,7 @@ public class CodeIdentity {
 				for (int j = 0; j < listImg.size(); ++j) {
 					StringBuilder picName = new StringBuilder();
 					picName.append(trainPath).append(File.separatorChar).append(file.getName().charAt(j)).append("-")
-							.append(Constants.getPicNo()).append(".jpg");
+							.append(getPicNo()).append(".jpg");
 					ImageIO.write(listImg.get(j), "JPG", new File(picName.toString()));
 				}
 			}
@@ -230,6 +232,10 @@ public class CodeIdentity {
 			}
 		}
 		return true;
+	}
+
+	public static int getPicNo() {
+		return ++PIC_NO;
 	}
 
 }

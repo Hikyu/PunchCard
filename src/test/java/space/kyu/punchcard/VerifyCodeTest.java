@@ -8,8 +8,9 @@ import java.io.FileOutputStream;
 
 import org.junit.Test;
 
-import space.kyu.punchcard.puchcard.CodeIdentity;
-import space.kyu.punchcard.puchcard.VerifyCode;
+import space.kyu.punchcard.code.CodeIdentity;
+import space.kyu.punchcard.code.VerifyCode;
+import space.kyu.punchcard.net.ServerOperation;
 
 public class VerifyCodeTest {
 	private static String testCode = ".\\resource\\test\\code.jpg";
@@ -19,7 +20,7 @@ public class VerifyCodeTest {
 	@Test
 	public void testGetCode() {
 		try {
-			byte[] bs = VerifyCode.getVerifyCode();
+			byte[] bs = ServerOperation.getVerifyCode();
 			File file = new File(testCode);
 			if (!(file.exists() && file.isFile())) {
 				file.createNewFile();
