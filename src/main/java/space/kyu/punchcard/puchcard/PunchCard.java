@@ -148,7 +148,7 @@ public class PunchCard {
 		String regex = "[0-9]{4}";
 		Pattern pattern = Pattern.compile(regex);
 		boolean matches = pattern.matcher(verifyCode).matches();
-		return "".equals(verifyCode) && tryTime < Config.MAX_GET_CODE_TRY_TIME && matches;
+		return ("".equals(verifyCode) || !matches) && tryTime < Config.MAX_GET_CODE_TRY_TIME;
 	}
 
 	private List<String> getPuchCardParams(String key) throws Exception {
