@@ -29,15 +29,16 @@ public class VerifyCode {
 	private static String trainPath = ".\\resource\\verifycode\\train";
 	private static String oriPath = ".\\resource\\verifycode\\origin";
 
-	public static String getCodeIdentityRes() {
+	public static String getCodeIdentityRes() throws Exception {
 		try {
 			storeCode(ServerOperation.getVerifyCode(), verifyCodePath);
 			checkTrainFileExist();
-			return CodeIdentity.getIdentityResult(verifyCodePath, trainPath);
+			String identityResult = CodeIdentity.getIdentityResult(verifyCodePath, trainPath);
+			return identityResult;
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw e;
 		}
-		return "";
 	}
 
 	private static void checkTrainFileExist() throws Exception {

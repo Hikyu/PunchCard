@@ -23,7 +23,11 @@ public abstract class AbstractState implements State {
 				System.err.println(tryNum + ": " + punchCard.getErrorMsg());
 			}
 		} while (!success && tryNum < Config.MAX_PUCH_CARD_TRY_TIME);
-		System.out.println(">>>成功打卡...");
+		if (success == false) {
+			System.err.println(">>>打卡失败... 尝试次数: " + tryNum);
+		} else {
+			System.out.println(">>>成功打卡...");
+		}
 		changeState(context);
 	}
 

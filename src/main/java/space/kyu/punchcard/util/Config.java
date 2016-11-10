@@ -32,7 +32,7 @@ public class Config {
 	// 上午上班打卡起始时间
 	public static final String AM_PUCH_CARD_START = "09:10:00";
 	// 上午下班打卡起始时间
-	public static final String AM_PUCH_CARD_END = "11:32:00";
+	public static final String AM_PUCH_CARD_END = "11:40:50";
 	// 下午上班班打卡起始时间
 	public static final String PM_PUCH_CARD_START = "11:57:00";
 	// 上午下班打卡起始时间
