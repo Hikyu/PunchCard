@@ -4,19 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
-
-import space.kyu.punchcard.net.HttpClientUtil;
 import space.kyu.punchcard.net.ServerOperation;
-import space.kyu.punchcard.util.Config;
 
 /**
  * 验证码的获取以及处理

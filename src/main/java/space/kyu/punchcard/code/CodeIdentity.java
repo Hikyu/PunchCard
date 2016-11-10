@@ -11,8 +11,6 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import space.kyu.punchcard.util.Config;
-
 /**
  * 验证码识别 
  * reference: http://blog.csdn.net/problc/article/details/5800093
