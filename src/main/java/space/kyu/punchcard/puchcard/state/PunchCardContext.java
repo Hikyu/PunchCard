@@ -1,10 +1,13 @@
 package space.kyu.punchcard.puchcard.state;
 
+import java.util.Date;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import space.kyu.punchcard.App;
 import space.kyu.punchcard.net.ServerOperation;
 import space.kyu.punchcard.puchcard.PunchCard;
 
@@ -19,15 +22,16 @@ import space.kyu.punchcard.puchcard.PunchCard;
 public class PunchCardContext {
 	private volatile static PunchCardContext instance;
 	private State currentState;
-
-	private PunchCardContext() {
+	private App app;
+	private PunchCardContext(App app) {
 		initCurrentState();
+		this.app = app;
 	}
-	public static PunchCardContext getInstance() {
+	public static PunchCardContext getInstance(App app) {
 		if (instance == null) {
 			synchronized (PunchCard.class) {
 				if (instance == null) {
-					instance = new PunchCardContext();
+					instance = new PunchCardContext(app);
 				}
 			}
 		}
@@ -36,6 +40,7 @@ public class PunchCardContext {
 
 	public void punchCard() {
 		currentState.punchCard(this);
+		app.startTask(currentState.getPunchCardTime());
 	}
 
 	private void initCurrentState() {
@@ -80,5 +85,9 @@ public class PunchCardContext {
 
 	public void changeState(State state) {
 		setState(state);
+	}
+	
+	public Date getPunchCardTime() {
+		return currentState.getPunchCardTime();
 	}
 }

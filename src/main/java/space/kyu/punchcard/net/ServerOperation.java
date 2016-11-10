@@ -61,7 +61,6 @@ public class ServerOperation {
 			URI uri = new URIBuilder().setScheme(SCHEME).setHost(HOST)
 					.setPath(PUCH_CARD_PATH).setParameters(params).build();
 			HttpGet httpGet = new HttpGet(uri);
-			System.out.println(uri.toString());
 			httpGet.setHeader("User-Agent", USER_AGENT);
 			httpGet.setHeader("Cookie", getCookie());
 			httpGet.setHeader("Referer", PUCH_CARD_REFERER_PATH);

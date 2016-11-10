@@ -11,7 +11,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import space.kyu.punchcard.util.Constants;
+import space.kyu.punchcard.util.Config;
 
 /**
  * 验证码识别 

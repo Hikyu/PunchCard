@@ -14,7 +14,7 @@ import org.jsoup.select.Elements;
 
 import space.kyu.punchcard.code.VerifyCode;
 import space.kyu.punchcard.net.ServerOperation;
-import space.kyu.punchcard.util.Constants;
+import space.kyu.punchcard.util.Config;
 
 /**
  * 执行打卡
@@ -148,7 +148,7 @@ public class PunchCard {
 		String regex = "[0-9]{4}";
 		Pattern pattern = Pattern.compile(regex);
 		boolean matches = pattern.matcher(verifyCode).matches();
-		return "".equals(verifyCode) && tryTime < Constants.MAX_GET_CODE_TRY_TIME && matches;
+		return "".equals(verifyCode) && tryTime < Config.MAX_GET_CODE_TRY_TIME && matches;
 	}
 
 	private List<String> getPuchCardParams(String key) throws Exception {
@@ -266,7 +266,7 @@ public class PunchCard {
 		return errorMsg;
 	}
 
-	// public static void main(String[] args) {
-	// new PunchCard().puchCardPMEnd();
-	// }
+	public static void main(String[] args) {
+		new PunchCard().puchCardAMStart();
+	}
 }

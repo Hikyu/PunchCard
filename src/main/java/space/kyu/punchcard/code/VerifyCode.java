@@ -16,7 +16,7 @@ import org.apache.http.client.utils.URIBuilder;
 
 import space.kyu.punchcard.net.HttpClientUtil;
 import space.kyu.punchcard.net.ServerOperation;
-import space.kyu.punchcard.util.Constants;
+import space.kyu.punchcard.util.Config;
 
 /**
  * 验证码的获取以及处理

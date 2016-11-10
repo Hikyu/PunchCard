@@ -9,7 +9,7 @@ public class PunchCardTest {
 
 	@Test
 	public void testGetState() {
-		PunchCardContext cardContext = PunchCardContext.getInstance();
+		PunchCardContext cardContext = PunchCardContext.getInstance(new App());
 		State currentState = cardContext.getCurrentState();
 		System.out.println(currentState.getClass().getName());
 	}
