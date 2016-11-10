@@ -1,5 +1,6 @@
 package space.kyu.punchcard.puchcard.state;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.jsoup.Jsoup;
@@ -9,6 +10,7 @@ import org.jsoup.select.Elements;
 
 import space.kyu.punchcard.App;
 import space.kyu.punchcard.net.ServerOperation;
+import space.kyu.punchcard.net.SmsMsgSender;
 import space.kyu.punchcard.puchcard.PunchCard;
 
 /**
@@ -39,10 +41,35 @@ public class PunchCardContext {
 	}
 
 	public void punchCard() {
-		currentState.punchCard(this);
-		app.startTask(currentState.getPunchCardTime());
+		boolean success = currentState.punchCard(this);
+		Date nextTime = currentState.getPunchCardTime();
+		sendSmsMsg(success, nextTime);
+		//启动下次打卡
+		app.startTask(nextTime);
 	}
 
+	private void sendSmsMsg(boolean success, Date nextTime) {
+		if (!(currentState instanceof AMEndState)) {
+			//作一个限制，只在打完上午上班卡时发送短信，节约经费~
+			return;
+		}
+		String time = "fail";
+		String trytime = "fail";
+		String next = "fail";
+		if (success) {
+			SimpleDateFormat df=new SimpleDateFormat("hh:mm:ss");
+			time = df.format(new Date());
+			//暂不支持
+			trytime = "-1";
+			next = df.format(nextTime);
+		}
+		boolean sendSmsMsg = SmsMsgSender.sendSmsMsg(time, trytime, next);
+		if (sendSmsMsg) {
+			System.out.println("短信成功发送~");
+		} else {
+			System.err.println("短信发送失败...");
+		}
+	}
 	private void initCurrentState() {
 		try {
 			String html = ServerOperation.getTimeCard();

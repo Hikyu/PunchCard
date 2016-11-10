@@ -36,6 +36,14 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.8.3</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>taobao.sdk</groupId>
+			<artifactId>alidayu</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+         <systemPath>${project.basedir}/lib/taobao-sdk-java-auto_1455552377940-20160607.jar</systemPath>
+		</dependency>
 
 
 	</dependencies>

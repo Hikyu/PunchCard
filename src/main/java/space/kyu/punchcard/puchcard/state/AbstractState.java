@@ -12,7 +12,7 @@ import space.kyu.punchcard.util.DateUtil;
 
 public abstract class AbstractState implements State {
 
-	public void punchCard(PunchCardContext context) {
+	public boolean punchCard(PunchCardContext context) {
 		PunchCard punchCard = new PunchCard();
 		boolean success = false;
 		int tryNum = 0;
@@ -29,6 +29,7 @@ public abstract class AbstractState implements State {
 			System.out.println(">>>成功打卡...");
 		}
 		changeState(context);
+		return success;
 	}
 
 	abstract boolean execPunchCard(PunchCard punchCard);
