@@ -62,7 +62,18 @@ public abstract class AbstractState implements State {
 		Random random = new Random();
 		int index = random.nextInt(dates.size());
 		Date punchCardTime = dates.get(index);
-
+		
+		//周末顺延
+		Calendar temp = Calendar.getInstance();
+		if (DateUtil.getDayOfWeek(punchCardTime) == 6) {
+			temp.setTime(punchCardTime);
+			temp.add(Calendar.DAY_OF_MONTH, 2);
+			return temp.getTime();
+		} else if (DateUtil.getDayOfWeek(punchCardTime) == 7) {
+			temp.setTime(punchCardTime);
+			temp.add(Calendar.DAY_OF_MONTH, 1);
+			return temp.getTime();
+		}
 		return punchCardTime;
 	}
 	

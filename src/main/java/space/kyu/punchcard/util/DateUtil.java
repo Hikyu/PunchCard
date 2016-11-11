@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -33,16 +32,17 @@ public class DateUtil {
 		dateList.add(endDate);
 		return dateList;
 	}
-	
+
 	public static boolean date2AfterDate1(Date date1, Date date2) {
 		return date2.after(date1);
 	}
-	
+
 	/**
 	 * 获取 hh:mm:ss 格式的日期的时分秒信息
+	 * 
 	 * @param formatDate
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static Map<String, String> getHMSFromFormatDate(String formatDate) throws Exception {
 		String regex = "^(([0-1]?[0-9])|([2][0-3])):([0-5]?[0-9])(:([0-5][0-9]))$";
@@ -57,5 +57,23 @@ public class DateUtil {
 		map.put("m", hms[1]);
 		map.put("s", hms[2]);
 		return map;
+	}
+
+	/**
+	 * 判断某天是周几
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static int getDayOfWeek(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		int dayForWeek = 0;
+		if (c.get(Calendar.DAY_OF_WEEK) == 1) {
+			dayForWeek = 7;
+		} else {
+			dayForWeek = c.get(Calendar.DAY_OF_WEEK) - 1;
+		}
+		return dayForWeek;
 	}
 }

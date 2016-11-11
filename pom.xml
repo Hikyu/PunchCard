@@ -37,7 +37,7 @@
 			<version>1.8.3</version>
 		</dependency>
 		
-		<dependency>
+		<dependency> 
 			<groupId>taobao.sdk</groupId>
 			<artifactId>alidayu</artifactId>
 			<version>1.0</version>

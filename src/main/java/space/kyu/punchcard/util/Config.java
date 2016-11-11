@@ -1,20 +1,5 @@
 package space.kyu.punchcard.util;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.Consts;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.message.BasicNameValuePair;
-
-import space.kyu.punchcard.net.HttpClientUtil;
-
 /**
  * 常量
  * 
@@ -32,11 +17,11 @@ public class Config {
 	// 上午上班打卡起始时间
 	public static final String AM_PUCH_CARD_START = "09:10:00";
 	// 上午下班打卡起始时间
-	public static final String AM_PUCH_CARD_END = "11:40:50";
+	public static final String AM_PUCH_CARD_END = "11:35:00";
 	// 下午上班班打卡起始时间
-	public static final String PM_PUCH_CARD_START = "11:57:00";
-	// 上午下班打卡起始时间
-	public static final String PM_PUCH_CARD_END = "18:30:00";
+	public static final String PM_PUCH_CARD_START = "12:00:00";
+	// 下午下班打卡起始时间
+	public static final String PM_PUCH_CARD_END = "18:15:00";
 
 
 }
