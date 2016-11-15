@@ -115,7 +115,6 @@ public class PunchCard {
 
 	private void sendPuchCardMsg(List<NameValuePair> params) throws Exception {
 		String result = ServerOperation.sendPuchCardMsg(params);
-		System.out.println(result);
 		if (result != null) {
 			if (result.contains("校验码不正确")) {
 				throw new Exception(">>>校验码不正确...");

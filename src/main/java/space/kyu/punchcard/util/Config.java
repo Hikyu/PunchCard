@@ -21,7 +21,7 @@ public class Config {
 	// 下午上班班打卡起始时间
 	public static final String PM_PUCH_CARD_START = "12:00:00";
 	// 下午下班打卡起始时间
-	public static final String PM_PUCH_CARD_END = "18:15:00";
+	public static final String PM_PUCH_CARD_END = "18:00:00";
 
 
 }

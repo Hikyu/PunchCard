@@ -181,14 +181,20 @@ public class CodeIdentity {
 	 * @throws Exception
 	 */
 	public static String getIdentityResult(String codePath, String trainPath) throws Exception {
-		BufferedImage img = removeBackgroud(codePath);
-		List<BufferedImage> listImg = splitImage(img);
-		Map<BufferedImage, String> map = loadTrainData(trainPath);
 		String result = "";
-		for (BufferedImage bi : listImg) {
-			result += getSingleCharOcr(bi, map);
+		try {
+			BufferedImage img = removeBackgroud(codePath);
+			List<BufferedImage> listImg = splitImage(img);
+			Map<BufferedImage, String> map = loadTrainData(trainPath);
+			for (BufferedImage bi : listImg) {
+				result += getSingleCharOcr(bi, map);
+			}
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
 		}
-		return result;
+		
 	}
 
 	/**

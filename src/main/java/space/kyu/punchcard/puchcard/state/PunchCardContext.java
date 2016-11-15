@@ -49,10 +49,10 @@ public class PunchCardContext {
 	}
 
 	private void sendSmsMsg(boolean success, Date nextTime) {
-		if (!(currentState instanceof AMEndState)) {
-			//作一个限制，只在打完上午上班卡时发送短信，节约经费~
-			return;
-		}
+//		if (!(currentState instanceof AMEndState)) {
+//			//作一个限制，只在打完上午上班卡时发送短信，节约经费~
+//			return;
+//		}
 		String time = "fail";
 		String trytime = "fail";
 		String next = "fail";

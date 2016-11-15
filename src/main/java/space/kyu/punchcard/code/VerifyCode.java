@@ -27,8 +27,7 @@ public class VerifyCode {
 			String identityResult = CodeIdentity.getIdentityResult(verifyCodePath, trainPath);
 			return identityResult;
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
+			return "";
 		}
 	}
 
