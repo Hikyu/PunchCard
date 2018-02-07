@@ -16,7 +16,6 @@ import org.apache.http.impl.client.HttpClients;
 /**
  * 网络请求工具类
  * @author kyu
- * 2016-11-08
  */
 public class HttpClientUtil {
 	private static HttpClient httpClient;

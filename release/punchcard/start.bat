@@ -1,0 +1,1 @@
+java -Xms20m -Xmx20m -cp lib/*;conf/*;punchcard.jar space.kyu.punchcard.App

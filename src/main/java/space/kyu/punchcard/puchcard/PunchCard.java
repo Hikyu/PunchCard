@@ -162,6 +162,7 @@ public class PunchCard {
 			List<String> params = analyzePuchCardFunc(puchCardFunc);
 			return params;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new Exception(">>>获取打卡参数信息失败...");
 		}
 

@@ -8,23 +8,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import space.kyu.punchcard.net.ServerOperation;
+import space.kyu.punchcard.util.Config;
 
 /**
  * 验证码的获取以及处理
  * 
  * @author kyu
- * 2016-11-07
  */
 public class VerifyCode {
-	private static String verifyCodePath = ".\\resource\\verifycode\\verifyCode.jpg";
-	private static String trainPath = ".\\resource\\verifycode\\train";
-	private static String oriPath = ".\\resource\\verifycode\\origin";
-
 	public static String getCodeIdentityRes() throws Exception {
 		try {
-			storeCode(ServerOperation.getVerifyCode(), verifyCodePath);
+			storeCode(ServerOperation.getVerifyCode(), Config.VERIFY_CODE_PATH);
 			checkTrainFileExist();
-			String identityResult = CodeIdentity.getIdentityResult(verifyCodePath, trainPath);
+			String identityResult = CodeIdentity.getIdentityResult(Config.VERIFY_CODE_PATH, Config.TRAIN_PATH);
 			return identityResult;
 		} catch (Exception e) {
 			return "";
@@ -32,11 +28,11 @@ public class VerifyCode {
 	}
 
 	private static void checkTrainFileExist() throws Exception {
-		File train = new File(trainPath);
+		File train = new File(Config.TRAIN_PATH);
 		boolean trainDirExist = train.exists() && train.isDirectory();
 		boolean trainFileExist = train.listFiles() != null && train.listFiles().length > 0;
 		if (!(trainDirExist && trainFileExist)) {
-			CodeIdentity.trainData(oriPath, trainPath);
+			CodeIdentity.trainData(Config.ORIGIN_PATH, Config.TRAIN_PATH);
 		}
 	}
 
@@ -59,13 +55,13 @@ public class VerifyCode {
 	 */
 	public static void storeCode2TrainDir(String codeName) {
 		try {
-			File file = new File(verifyCodePath);
+			File file = new File(Config.VERIFY_CODE_PATH);
 			BufferedInputStream iStream = new BufferedInputStream(new FileInputStream(file));
 			byte[] bs = new byte[(int) file.length()];
 			iStream.read(bs);
-			String path = oriPath + File.separator + codeName + ".jpg";
+			String path = Config.ORIGIN_PATH + File.separator + codeName + ".jpg";
 			storeCode(bs, path);
-			CodeIdentity.trainData(oriPath, trainPath);
+			CodeIdentity.trainData(Config.ORIGIN_PATH, Config.TRAIN_PATH);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

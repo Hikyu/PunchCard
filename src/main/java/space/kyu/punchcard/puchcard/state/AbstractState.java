@@ -50,6 +50,8 @@ public abstract class AbstractState implements State {
 		punchCardStart.set(Calendar.MINUTE, Integer.valueOf(hms.get("m")));
 		punchCardStart.set(Calendar.SECOND, Integer.valueOf(hms.get("s")));
 
+		//过了打卡时间，就把打卡任务推迟到第二天
+		//TODO 转换到下一个打卡状态好一点
 		if (!DateUtil.date2AfterDate1(new Date(), punchCardStart.getTime())) {
 			punchCardStart.add(Calendar.DAY_OF_MONTH, 1);
 		}

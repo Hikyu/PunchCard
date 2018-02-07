@@ -1,7 +1,8 @@
 package space.kyu.punchcard.puchcard.state;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,8 +11,8 @@ import org.jsoup.select.Elements;
 
 import space.kyu.punchcard.App;
 import space.kyu.punchcard.net.ServerOperation;
-import space.kyu.punchcard.net.SmsMsgSender;
 import space.kyu.punchcard.puchcard.PunchCard;
+import space.kyu.punchcard.puchcard.listener.PunchCardListener;
 
 /**
  *  发起打卡请求 共有四种状态：
@@ -19,13 +20,14 @@ import space.kyu.punchcard.puchcard.PunchCard;
  *  状态之间自动转换，且状态可扩展 状态模式
  * 
  * @author kyu
- * 2016-11-09
  */
 public class PunchCardContext {
 	private volatile static PunchCardContext instance;
 	private State currentState;
 	private App app;
+	private List<PunchCardListener> listeners;
 	private PunchCardContext(App app) {
+		listeners = new ArrayList<>();
 		initCurrentState();
 		this.app = app;
 	}
@@ -43,31 +45,14 @@ public class PunchCardContext {
 	public void punchCard() {
 		boolean success = currentState.punchCard(this);
 		Date nextTime = currentState.getPunchCardTime();
-		sendSmsMsg(success, nextTime);
+		done(success, nextTime);
 		//启动下次打卡
 		app.startTask(nextTime);
 	}
 
-	private void sendSmsMsg(boolean success, Date nextTime) {
-//		if (!(currentState instanceof AMEndState)) {
-//			//作一个限制，只在打完上午上班卡时发送短信，节约经费~
-//			return;
-//		}
-		String time = "fail";
-		String trytime = "fail";
-		String next = "fail";
-		if (success) {
-			SimpleDateFormat df=new SimpleDateFormat("hh:mm:ss");
-			time = df.format(new Date());
-			//暂不支持
-			trytime = "-1";
-			next = df.format(nextTime);
-		}
-		boolean sendSmsMsg = SmsMsgSender.sendSmsMsg(time, trytime, next);
-		if (sendSmsMsg) {
-			System.out.println("短信成功发送~");
-		} else {
-			System.err.println("短信发送失败...");
+	private void done(boolean success, Date nextTime) {
+		for (PunchCardListener punchCardListener : listeners) {
+			punchCardListener.done(success, nextTime, -1);
 		}
 	}
 	private void initCurrentState() {
@@ -77,10 +62,6 @@ public class PunchCardContext {
 			Elements elements = doc.select("td.ListCellRow > a[href]");
 			Element element = elements.get(0);
 			String puchCardFunc = element.attr("onclick");
-			if (puchCardFunc.contains("Kq1")) {
-				currentState = new AMStartState();
-				return;
-			}
 			
 			if (puchCardFunc.contains("Kq2")) {
 				currentState = new AMEndState();
@@ -96,6 +77,9 @@ public class PunchCardContext {
 				currentState = new PMEndState();
 				return;
 			}
+			//如果不是上午下班，下午上班，下午下班，则默认打上午上班卡
+			currentState = new AMStartState();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -116,5 +100,9 @@ public class PunchCardContext {
 	
 	public Date getPunchCardTime() {
 		return currentState.getPunchCardTime();
+	}
+	
+	public void registerListener(PunchCardListener listener) {
+		listeners.add(listener);
 	}
 }

@@ -14,6 +14,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
+
+import space.kyu.punchcard.util.Config;
 /**
  * 与服务器交互工具类
  * @author kyu
@@ -22,8 +24,8 @@ import org.apache.http.message.BasicNameValuePair;
 public class ServerOperation {
 	private static int BUFFER_SIZE = 1 * 1024 * 1024;
 	private static String COOKIE = "";
-	public static final String USER = "yukai";
-	public static final String PASSWORD = "yukai";
+	public static final String USER = Config.USER;
+	public static final String PASSWORD = Config.PASSWORD;
 	public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.87 Safari/537.36";
 	public static final String SCHEME = "http";
 	public static final String HOST = "192.168.101.25";

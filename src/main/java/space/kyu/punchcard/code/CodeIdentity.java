@@ -13,10 +13,8 @@ import javax.imageio.ImageIO;
 
 /**
  * 验证码识别 
- * reference: http://blog.csdn.net/problc/article/details/5800093
  * 
  * @author kyu
- * 2016-11-07
  */
 public class CodeIdentity {
 	private static Map<BufferedImage, String> trainMap = null;
